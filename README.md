@@ -1,3 +1,15 @@
+## Details of home assignments
+
+- After setting up a S3 bucket with public access
+    - Link to S3 - http://my-sw-js-manual-1.s3-website-us-east-1.amazonaws.com/
+
+- After setting up a cloud front pointing to s3
+    - Link to S3 - http://my-sw-js-manual-2.s3-website-us-east-1.amazonaws.com/ (404)
+    - Link to cloud front - https://d2nlgshvgjhx2h.cloudfront.net/ (CDN)
+
+- After automation
+    - Link to cloud front - https://d1was9ef6gh7jh.cloudfront.net/
+
 # React-shop-cloudfront
 
 This is frontend starter project for nodejs-aws mentoring program. It uses the following technologies:

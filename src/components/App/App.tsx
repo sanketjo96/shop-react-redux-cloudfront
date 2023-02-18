@@ -11,6 +11,8 @@ import { Typography } from "@mui/material";
 function App() {
   return (
     <MainLayout>
+      <div>This is hello from cloud front</div>
+      <div>And this automatic deployment</div>
       <Routes>
         <Route path="/" element={<PageProducts />} />
         <Route path="cart" element={<PageCart />} />
