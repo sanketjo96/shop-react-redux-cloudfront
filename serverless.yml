@@ -1,33 +1,33 @@
-service: my-store-app
+service: my-react-shopping-app
 
 frameworkVersion: "3"
 
 provider:
   name: aws
   runtime: nodejs14.x
-  region: eu-west-1
-  # setup profile for AWS CLI.
-  # profile: node-aws
+  region: us-east-1
 
 plugins:
   - serverless-finch
-  # 'serverless-single-page-app-plugin' is a custom plugin that located .serverless_plugins folder.
-  # Existing plugin (https://www.npmjs.com/package/serverless-single-page-app-plugin) doesn't have invalidate cache feature that often used during CI/CD events.
-  # How to build your own plugins: https://www.serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin
   - serverless-single-page-app-plugin
   - serverless-s3-cleaner
 
 custom:
+  # Creating ref to bucket name for reuse
+  s3BucketName: my-react-app-serverless
+
+  # Setup specific to serverless-finch for static file deploy
   client:
-    bucketName: my-store-app
+    bucketName: ${self:custom.s3BucketName}
     distributionFolder: dist
-  s3BucketName: ${self:custom.client.bucketName}
 
   ## Serverless-single-page-app-plugin configuration:
   s3LocalPath: ${self:custom.client.distributionFolder}/
+
+  ## Conf for serverless-s3-cleaner
   serverless-s3-cleaner:
     buckets:
-      - ${self:custom.client.bucketName}
+      - ${self:custom.s3BucketName}
 
 resources:
   Resources:
@@ -40,8 +40,6 @@ resources:
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: index.html
-        # VersioningConfiguration:
-        #   Status: Enabled
 
     ## Specifying the policies to make sure all files inside the Bucket are avaialble to CloudFront
     WebAppS3BucketPolicy:
@@ -80,16 +78,9 @@ resources:
               ## In case you don't want to restrict the bucket access use CustomOriginConfig and remove S3OriginConfig
               S3OriginConfig:
                 OriginAccessIdentity: !Sub origin-access-identity/cloudfront/${OriginAccessIdentity}
-              # CustomOriginConfig:
-              #   HTTPPort: 80
-              #   HTTPSPort: 443
-              #   OriginProtocolPolicy: https-only
           Enabled: true
           IPV6Enabled: true
           HttpVersion: http2
-          ## Uncomment the following section in case you are using a custom domain
-          # Aliases:
-          # - mysite.example.com
           DefaultRootObject: index.html
           ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
           ## The only exception are files that actually exist e.h. app.js, reset.css
@@ -119,13 +110,8 @@ resources:
           ## The certificate to use when viewers use HTTPS to request objects.
           ViewerCertificate:
             CloudFrontDefaultCertificate: true
-          ## Uncomment the following section in case you want to enable logging for CloudFront requests
-          # Logging:
-          #   IncludeCookies: 'false'
-          #   Bucket: mylogs.s3.amazonaws.com
-          #   Prefix: myprefix
-
-  ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
+ 
+## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation
   Outputs:
     WebAppS3BucketOutput:
       Value: !Ref WebAppS3Bucket
