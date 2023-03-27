@@ -1,4 +1,5 @@
 import React from "react";
+import { axiosInterceptor } from "./utils/interceptors";
 import { createRoot } from "react-dom/client";
 import App from "~/components/App/App";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -7,6 +8,8 @@ import { BrowserRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { theme } from "~/theme";
+
+axiosInterceptor();
 
 const queryClient = new QueryClient({
   defaultOptions: {
